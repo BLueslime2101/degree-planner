@@ -226,6 +226,12 @@
                             <div class="progress-track-thin">
                                 <div class="progress-fill fill-blue" th:style="'width: ' + (${mathReqCompleted} * 100 / ${mathReqTotal}) + '%'"></div>
                             </div>
+                            <div class="progress-track-thin planned-track" th:if="${mathReqPlanned > 0}">
+                                <div class="progress-fill fill-planned" th:style="'width: ' + ((${mathReqCompleted + mathReqPlanned} * 100) / ${mathReqTotal}) + '%'"></div>
+                            </div>
+                            <div class="progress-caption" th:if="${mathReqPlanned > 0}">
+                                <small th:text="${mathReqPlanned} + ' planned'"></small>
+                            </div>
                         </div>
                     </summary>
                     <div class="req-body">
@@ -236,36 +242,72 @@
                 </details>
             </div>
 
-            <!-- Right Panel: Planner + History -->
-            <div class="planner-panel" id="right-panel">
-                <!-- Planner view: next semester catalog -->
+            <div class="planner-panel" id="right-panel"> 
                 <div id="planner-view">
                     <div class="panel-title-main">Plan your next semester</div>
-                    <div class="panel-subtitle-main">Select from sample upper-level courses (demo only, not saved yet).</div>
-
-                    <div class="history-table-wrapper">
-                        <table class="table table-borderless align-middle mb-0 history-table">
-                            <thead>
-                            <tr>
-                                <th scope="col">Select</th>
-                                <th scope="col">Course</th>
-                                <th scope="col">Title</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="course,iter : ${nextSemesterCatalog}">
-                                <td>
-                                    <input type="checkbox" class="custom-checkbox" th:attr="name='planned-' + ${iter.index}">
-                                </td>
-                                <td class="course-code" th:text="${course.courseCode}">CSCI-C 4xx</td>
-                                <td th:text="${course.title}">Advanced Topics in CS (3 cr)</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <div class="panel-subtitle-main">
+                        <span th:if="${planningTerm != null}">Planning for <strong th:text="${planningTerm}">Fall 2026</strong>.</span>
+                        <span th:if="${planningTerm == null}">Select from sample upper-level courses.</span>
                     </div>
+
+                    <form th:action="@{/plan}" method="post">
+                        <input type="hidden" name="term" th:value="${planningTerm}">
+                        <div class="history-table-wrapper">
+                            <table class="table table-borderless align-middle mb-0 history-table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Select</th>
+                                    <th scope="col">Course</th>
+                                    <th scope="col">Title</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="course : ${nextSemesterCatalog}">
+                                    <td>
+                                        <input type="checkbox" class="custom-checkbox" name="selectedCourses" th:value="${course.courseCode}">
+                                    </td>
+                                    <td class="course-code" th:text="${course.courseCode}">CSCI-C 4xx</td>
+                                    <td th:text="${course.title}">Advanced Topics in CS (3 cr)</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(nextSemesterCatalog)}">
+                                    <td colspan="3">No remaining courses available to plan.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="history-table-wrapper" style="margin-top: 1.5rem;" th:if="${planningTermCourses != null and !#lists.isEmpty(planningTermCourses)}">
+                            <div class="panel-subtitle-main" style="margin-bottom: 0.5rem;">
+                                Courses already planned for <span th:text="${planningTerm}">Fall 2026</span> (uncheck to remove):
+                            </div>
+                            <table class="table table-borderless align-middle mb-0 history-table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Remove</th>
+                                    <th scope="col">Course</th>
+                                    <th scope="col">Title</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="course : ${planningTermCourses}">
+                                    <td>
+                                        <input type="checkbox" class="custom-checkbox" name="removeCourseIds" th:value="${course.id}">
+                                    </td>
+                                    <td class="course-code" th:text="${course.courseCode}">CSCI-C 4xx</td>
+                                    <td th:text="${course.title}">Advanced Topics in CS (3 cr)</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="planner-cta" style="margin-top: 1rem;">
+                            <button type="submit" class="planner-link" style="border:none; background:none; padding:0; cursor:pointer;">
+                                Save changes for this semester →
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
-                <!-- History view: details/summary per term -->
                 <div id="history-view" style="display:none;">
                     <div class="panel-title-main">Course history by semester</div>
                     <div class="panel-subtitle-main">Click a term to expand and see all courses and grades.</div>
@@ -274,6 +316,11 @@
                         <details class="term-details">
                             <summary class="term-summary" th:text="${entry.key}">Fall 2023</summary>
                             <div class="term-body">
+                                <div th:if="${termEditable[entry.key]}">
+                                    <a th:href="@{/plan(term=${entry.key})}" class="planner-link" style="display:inline-block; margin-bottom: 0.75rem;">
+                                        Edit this semester in planner →
+                                    </a>
+                                </div>
                                 <table class="table table-borderless align-middle mb-0 history-table">
                                     <thead>
                                     <tr>

@@ -509,6 +509,20 @@ body {
     background-color: #16a34a;
 }
 
+.fill-planned {
+    background-color: #facc15; 
+}
+
+.planned-track {
+    margin-top: 0.35rem;
+}
+
+.progress-caption {
+    margin-top: 0.25rem;
+    font-size: 0.7rem;
+    color: #a16207; 
+}
+
 summary::-webkit-details-marker {
     display: none;
 }
