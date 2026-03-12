@@ -1,0 +1,12 @@
+target/
+!target/*.jar
+.git/
+.github/
+*.md
+.gitignore
+.mvn/
+mvnw
+mvnw.cmd
+*.log
+*.tmp
+.DS_Store

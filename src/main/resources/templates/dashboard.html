@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Degree Planner</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+
+<body>
+    <div class="shell">
+        <header class="nav-root">
+            <div class="nav-inner">
+                <div class="brand-mark">
+                    <div>
+                        <div class="brand-text-main">Degree Planner</div>
+                        <div class="brand-text-sub">Student progress &amp; term planning</div>
+                    </div>
+                </div>
+                <div class="nav-links">
+                    <a href="/dashboard" class="nav-link-custom active">Overview</a>
+                    <a href="/plan" class="nav-link-custom">Planner</a>
+                    <span class="user-pill">Signed in as <span th:text="${student.studentUsername}"></span></span>
+                    <form action="/logout" method="get">
+                        <button type="submit" class="logout-btn">Logout</button>
+                    </form>
+                </div>
+            </div>
+        </header>
+
+        <main class="page-body">
+            <div class="page-header">
+                <div>
+                    <h1 class="welcome-title">Welcome back, <span th:text="${student.studentUsername}"></span></h1>
+                    <p class="welcome-sub">This page shows your current semester and overall progress.</p>
+                </div>
+                <div>
+                    <div class="badge-semester">
+                        <span class="badge-dot"></span>
+                        <span th:text="${currentTerm != null ? currentTerm : 'Current semester'}"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="overview-grid">
+                <section class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Degree progress</h2>
+                            <p class="panel-subtitle">Overview of completion across your program.</p>
+                        </div>
+                    </div>
+
+                    <div class="progress-block">
+                        <div class="progress-label-row">
+                            <span class="progress-label">Overall completion</span>
+                            <span class="progress-value" th:text="${totalProgress} + '%'">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill-total" th:style="'width: ' + ${totalProgress} + '%'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-block">
+                        <div class="progress-label-row">
+                            <span class="progress-label">CS major core</span>
+                            <span class="progress-value" th:text="${csProgress} + '%'">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill-major" th:style="'width: ' + ${csProgress} + '%'">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-block">
+                        <div class="progress-label-row">
+                            <span class="progress-label">General education</span>
+                            <span class="progress-value" th:text="${genEdProgress} + '%'">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill-gened" th:style="'width: ' + ${genEdProgress} + '%'">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="planner-cta">
+                        <a href="/plan" class="planner-link">Open planner &amp; history →</a>
+                    </div>
+                </section>
+                
+                <section class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Current semester classes</h2>
+                            <p class="panel-subtitle">What you're taking right now.</p>
+                        </div>
+                    </div>
+                    <div class="history-table-wrapper">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Course</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="course : ${currentTermCourses}">
+                                    <td class="course-code" th:text="${course.courseCode}">CSCI-C 323</td>
+                                    <td th:text="${course.title}">Mobile App Development</td>
+                                    <td>
+                                        <span class="grade-pill na" th:text="${course.grade}">NR</span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(currentTermCourses)}">
+                                    <td colspan="3">No courses found for the current semester.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

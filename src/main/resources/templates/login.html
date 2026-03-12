@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Degree Planner</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body class="login-body">
+<div class="login-shell">
+    <div class="brand-pill">
+        <span class="brand-dot"></span>
+        <span>Degree Planner</span>
+    </div>
+
+    <h1 class="login-title">Sign in to your planner</h1>
+    <p class="login-subtitle">Use one of the demo student accounts to explore the semester planning experience.</p>
+
+    <form action="/login" method="post">
+        <div th:if="${loginError}" th:text="${loginError}" class="login-error"></div>
+
+        <div>
+            <label for="studentUsername" class="form-label">Student username</label>
+            <input type="text"
+                   id="studentUsername"
+                   name="studentUsername"
+                   class="form-control"
+                   placeholder="Try: student1 or shisara"
+                   required>
+        </div>
+
+        <div>
+            <label for="password" class="form-label">Password</label>
+            <input type="password"
+                   id="password"
+                   name="password"
+                   class="form-control"
+                   placeholder="Demo: student1pass or shisara123"
+                   required>
+            <div class="hint-text">Demo logins: <span>student1 / student1pass</span> or <span>shisara / shisara123</span>.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Continue</button>
+    </form>
+
+    <p class="footer-text">Use your Social Security Number, Do it</span></p>
+</div>
+</body>
+</html>
