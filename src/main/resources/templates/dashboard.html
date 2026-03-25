@@ -20,7 +20,9 @@
                 <div class="nav-links">
                     <a href="/dashboard" class="nav-link-custom active">Overview</a>
                     <a href="/plan" class="nav-link-custom">Planner</a>
-                    <span class="user-pill">Signed in as <span th:text="${student.studentUsername}"></span></span>
+                    <span class="user-pill">Signed in as 
+                        <span th:text="${student.studentUsername}"></span>
+                    </span>
                     <form action="/logout" method="get">
                         <button type="submit" class="logout-btn">Logout</button>
                     </form>
@@ -31,7 +33,9 @@
         <main class="page-body">
             <div class="page-header">
                 <div>
-                    <h1 class="welcome-title">Welcome back, <span th:text="${student.studentUsername}"></span></h1>
+                    <h1 class="welcome-title">Welcome back, 
+                        <span th:text="${student.studentUsername}"></span>
+                    </h1>
                     <p class="welcome-sub">This page shows your current semester and overall progress.</p>
                 </div>
                 <div>
